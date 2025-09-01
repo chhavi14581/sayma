@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday  🎉</title>
+  <style>
+    :root{
+      --accent: #ff6b81;
+      --font-sans: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:2;overflow-x:hidden}
+
+    body{
+      font-family:var(--font-sans);
+      color:#fff;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4 50%, #fbc2eb);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .container{
+      max-width:1200px;
+      width:200%;
+      text-align:center;
+      position:relative;
+      z-index:2;
+    }
+
+    header h1{
+      font-size:50px;
+      margin:0;
+      text-shadow:2px 2px 6px rgba(0,0,0,0.4);
+    }
+    header p{margin:8px 0 20px;font-size:20px}
+
+    .btn{
+      background:#fff;
+      color:#ff6b81;
+      font-weight:bold;
+      border:none;
+      padding:10px 16px;
+      border-radius:50px;
+      cursor:pointer;
+      margin:6px;
+      transition:.3s;
+    }
+    .btn:hover{background:#ff6b81;color:#fff}
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,2fr));
+      gap:30px;
+      margin:20px 0;
+    }
+    .card{
+      background:rgba(255,255,255,0.1);
+      border-radius:12px;
+      overflow:hidden;
+      cursor:pointer;
+      transition:.3s;
+    }
+    .card img{
+      width:100%;
+      height:200px;
+      object-fit:cover;
+    }
+    .card:hover{transform:scale(1.05)}
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.7);
+      z-index:100;
+    }
+    .modal.show{display:flex}
+    .modal-content{
+      background:rgba(255,255,255,0.1);
+      padding:20px;
+      border-radius:16px;
+      max-width:800px;
+      width:50%;
+      color:#fff;
+    }
+    .modal-content img{width:100%;border-radius:12px}
+    .modal-content video{width:100%; height:50%;margin-top:15px;border-radius:12px}
+    .close{
+      float:right;
+      font-size:24px;
+      cursor:pointer;
+    }
+
+    /* Floating balloons */
+    .heart {
+      position: fixed;
+      bottom: -10px;
+      width: 20px;
+      height: 20px;
+      background: #ff6b81;
+      transform: rotate(45deg);
+      animation: floatUp 6s linear infinite;
+      z-index:1;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ff6b81;
+      border-radius: 50%;
+    }
+    .heart::before { top: -10px; left: 0; }
+    .heart::after  { left: -10px; top: 0; }
+    
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(45deg); opacity:1; }
+      100% { transform: translateY(-110vh) rotate(45deg); opacity:0; }
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      z-index:1;
+    }
+    
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎂 Happy Birthday Dear Sayma 
+      🎂</h1>
+      <p>तुम खुश रहो हमेशा और हम बस तुमको हंसाते रहे <br />
+तुम बोलती रहो कुछ भी पूरा दिन और हम बस तुमको सुनते रहे  <br />
+ऐसे ही नहीं बेचैन है हम <br />
+काश तुम सोती रहो मेरे सामने और हम बस तुमको ध्यान से देखते रहे  💖</p>
+      <button class="btn" id="musicBtn">▶ Play Music</button>
+    </header>
+
+    <section class="gallery" id="gallery"></section>
+  </div>
+
+  <!-- Hidden Audio -->
+  <audio id="bgMusic" loop src="ilu.mp3"></audio>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close" id="closeBtn">&times;</span>
+      <img id="modalImg" src="">
+      <p id="modalQuote"></p>
+      <video id="birthdayVideo" controls>
+        <source src="Chhavi.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <script>
+    // Images + Quotes
+    const images = [
+      {file:'CH1.jpg', quote:'You make the world brighter 🌸'},
+      {file:'CH2.jpg', quote:'Your smile is the best gift 🎀'},
+      {file:'CH3.jpg', quote:'Forever my best friend 💕'},
+      {file:'CH4.jpg', quote:'Shine like the star you are ✨'},
+      {file:'CH5.jpg', quote:'Every moment with you is special 🌷'},
+      {file:'CH6.jpg', quote:'Keep spreading love & happiness 💖'}
+    ];
+
+    const gallery = document.getElementById("gallery");
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modalImg");
+    const modalQuote = document.getElementById("modalQuote");
+    const closeBtn = document.getElementById("closeBtn");
+
+    images.forEach((img,i)=>{
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML=`<img src="${img.file}" alt="Birthday photo">`;
+      card.addEventListener("click",()=>{
+        modal.classList.add("show");
+        modalImg.src=img.file;
+        modalQuote.textContent=img.quote;
+        launchConfetti(); // 🎊 Confetti when image opens
+      });
+      gallery.appendChild(card);
+    });
+
+    closeBtn.onclick=()=>modal.classList.remove("show");
+    window.onclick=(e)=>{if(e.target==modal) modal.classList.remove("show");}
+
+    // Music
+    const bgMusic=document.getElementById("bgMusic");
+    const musicBtn=document.getElementById("musicBtn");
+    let playing=false;
+    musicBtn.addEventListener("click",()=>{
+      if(playing){ bgMusic.pause(); musicBtn.textContent="▶ Play Music"; }
+      else{ bgMusic.play(); musicBtn.textContent="⏸ Pause Music"; }
+      playing=!playing;
+    });
+
+    // Floating hearts
+    function createHeart(){
+      const heart=document.createElement("div");
+      heart.className="heart";
+      heart.style.left=Math.random()*100+"vw";
+      heart.style.animationDuration=(3+Math.random()*3)+"s";
+      document.body.appendChild(heart);
+      setTimeout(()=>heart.remove(),6000);
+    }
+    setInterval(createHeart,500);
+
+    // Confetti
+    function launchConfetti(){
+      for(let i=0;i<40;i++){
+        const confetti=document.createElement("div");
+        confetti.className="confetti";
+        confetti.style.left=Math.random()*100+"vw";
+        confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+        confetti.style.animationDuration=(2+Math.random()*3)+"s";
+        document.body.appendChild(confetti);
+        setTimeout(()=>confetti.remove(),5000);
+      
+      
+      }
+    }
+  </script>
+</body>
+</html>
